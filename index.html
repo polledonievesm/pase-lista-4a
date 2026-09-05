@@ -994,7 +994,7 @@
       const message = event.data;
       if (!message || message.source !== API_MESSAGE_SOURCE || !message.requestId) return;
       const pending = bridgePending.get(message.requestId);
-      if (!pending || event.source !== pending.frame.contentWindow) return;
+      if (!pending) return;
       if (message.ok) pending.resolve(message.data);
       else pending.reject(new Error(message.error || 'Google Sheets no pudo completar la operación.'));
       cleanupBridge(message.requestId);
