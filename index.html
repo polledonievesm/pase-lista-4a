@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pase de lista 4°A</title>
+  <style>
+    :root {
+      --teal-900: #075E68;
+      --teal-800: #087F8C;
+      --teal-700: #0B93A1;
+      --teal-100: #DFF4F6;
+      --navy: #102A43;
+      --muted: #64748B;
+      --line: #D8E3E8;
+      --cream: #FFFDF9;
+      --paper: #FFFFFF;
+      --green: #16A34A;
+      --green-soft: #DCFCE7;
+      --red: #DC2626;
+      --red-soft: #FEE2E2;
+      --orange: #F97316;
+      --orange-soft: #FFEDD5;
+      --blue: #2563EB;
+      --blue-soft: #DBEAFE;
+      --shadow: 0 14px 40px rgba(15, 50, 65, .13);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: #EFF8FA; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--navy);
+      font-family: Inter, ui-rounded, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 8% 13%, rgba(250, 204, 21, .17) 0 55px, transparent 56px),
+        radial-gradient(circle at 92% 86%, rgba(37, 99, 235, .08) 0 86px, transparent 87px),
+        linear-gradient(135deg, #EAF7F9 0%, #F9F5FC 55%, #FFF8ED 100%);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: wait; opacity: .65; }
+    .hidden { display: none !important; }
+
+    .connection-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px;
+    }
+    .connection-card {
+      width: min(540px, 100%);
+      overflow: hidden;
+      border: 1px solid rgba(8, 127, 140, .14);
+      border-radius: 26px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+    .connection-head {
+      padding: 27px 25px 24px;
+      color: white;
+      background: linear-gradient(145deg, var(--teal-900), var(--teal-700));
+    }
+    .connection-head h1 { margin: 0; font-size: clamp(27px, 7vw, 36px); }
+    .connection-head p { margin: 8px 0 0; color: #D9FAFD; font-weight: 700; line-height: 1.45; }
+    .connection-form { padding: 25px; }
+    .connection-form .field + .field { margin-top: 16px; }
+    .connection-form input { font-size: 16px; }
+    .connection-help { margin: 17px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .connection-error { margin: 0 0 16px; padding: 12px 14px; border-radius: 12px; background: var(--red-soft); color: #991B1B; font-weight: 800; }
+
+    .app-shell { min-height: 100vh; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 max(18px, env(safe-area-inset-left));
+      background: rgba(255, 255, 255, .94);
+      border-bottom: 1px solid rgba(8, 127, 140, .12);
+      backdrop-filter: blur(15px);
+    }
+
+    .menu-button {
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--teal-800);
+      color: white;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 5px 0 var(--teal-900);
+    }
+    .menu-button svg { width: 23px; height: 23px; }
+    .brand { min-width: 0; flex: 1; }
+    .brand strong { display: block; font-size: 18px; color: var(--teal-900); }
+    .brand small { display: block; margin-top: 2px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .group-badge {
+      padding: 8px 13px;
+      border: 2px solid #D6C8EA;
+      border-radius: 999px;
+      color: #7047A5;
+      font-weight: 900;
+      background: #FBF8FF;
+    }
+
+    .drawer-overlay { position: fixed; inset: 0; z-index: 50; background: rgba(15, 23, 42, .4); }
+    .drawer {
+      position: fixed;
+      z-index: 60;
+      inset: 0 auto 0 0;
+      width: min(330px, 86vw);
+      padding: 28px 20px;
+      background: white;
+      box-shadow: var(--shadow);
+      transform: translateX(-105%);
+      transition: transform .22s ease;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-title { margin: 10px 10px 24px; }
+    .drawer-title strong { display: block; font-size: 22px; color: var(--teal-900); }
+    .drawer-title span { display: block; margin-top: 5px; color: var(--muted); }
+    .nav-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0;
+      padding: 14px 16px;
+      border: 0;
+      border-radius: 14px;
+      background: transparent;
+      color: var(--navy);
+      text-align: left;
+      font-weight: 800;
+    }
+    .nav-button:hover, .nav-button.active { background: var(--teal-100); color: var(--teal-900); }
+    .nav-icon { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: white; border: 1px solid var(--line); }
+    .nav-separator { height: 1px; margin: 18px 10px; background: var(--line); }
+
+    main { width: min(1080px, 100%); margin: 0 auto; padding: 26px 18px 52px; }
+    .screen { animation: appear .2s ease; }
+    @keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 26px 26px 0 0;
+      min-height: 190px;
+      padding: 32px;
+      color: white;
+      background: linear-gradient(145deg, var(--teal-900), var(--teal-700));
+    }
+    .hero::before, .hero::after { content: ""; position: absolute; border: 3px solid rgba(255,255,255,.19); border-radius: 50%; }
+    .hero::before { width: 140px; height: 140px; right: -35px; top: -48px; }
+    .hero::after { width: 78px; height: 78px; right: 75px; bottom: -39px; }
+    .hero h1 { position: relative; margin: 0; font-size: clamp(28px, 5vw, 42px); letter-spacing: -.6px; }
+    .hero p { position: relative; max-width: 620px; margin: 10px 0 0; color: #D9FAFD; font-weight: 600; }
+    .hero-mark {
+      position: absolute;
+      right: 35px;
+      bottom: 22px;
+      width: 74px;
+      height: 90px;
+      transform: rotate(12deg);
+      opacity: .9;
+    }
+
+    .home-card {
+      width: min(760px, calc(100% - 28px));
+      margin: -34px auto 0;
+      position: relative;
+      z-index: 2;
+      padding: 26px;
+      border: 1px solid rgba(8, 127, 140, .12);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .98);
+      box-shadow: var(--shadow);
+    }
+    .date-row { display: flex; gap: 16px; align-items: center; }
+    .calendar-icon { flex: 0 0 54px; width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: var(--teal-100); color: var(--teal-900); }
+    .calendar-icon svg { width: 28px; }
+    .date-copy { flex: 1; min-width: 0; }
+    .eyebrow { margin: 0 0 4px; color: var(--muted); font-size: 13px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+    .display-date { margin: 0; font-size: clamp(17px, 4vw, 22px); font-weight: 900; }
+    .change-date { margin-top: 8px; border: 0; padding: 0; background: transparent; color: var(--teal-800); font-size: 13px; font-weight: 800; text-decoration: underline; }
+    .date-input { margin-top: 10px; width: 100%; max-width: 260px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; color: var(--navy); }
+    .divider { height: 1px; margin: 24px 0; background: repeating-linear-gradient(90deg, var(--line) 0 7px, transparent 7px 14px); }
+    .question { text-align: center; font-size: clamp(24px, 5vw, 32px); margin: 0 0 20px; }
+    .choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .choice-button { min-height: 62px; border: 2px solid transparent; border-radius: 17px; font-size: 22px; font-weight: 900; }
+    .choice-yes { color: white; background: var(--teal-800); box-shadow: 0 6px 0 var(--teal-900); }
+    .choice-no { color: var(--navy); background: #E4F3FB; box-shadow: 0 6px 0 #BADCEA; }
+
+    .notice { margin: 18px 0 0; padding: 14px 16px; border-radius: 13px; background: #FFF7E6; border: 1px solid #F5D792; color: #7C4A03; font-weight: 700; }
+    .reason-panel { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--line); }
+    .reason-panel label, .field label { display: block; margin-bottom: 7px; color: #334155; font-size: 14px; font-weight: 900; }
+    .reason-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .reason-button { min-height: 50px; padding: 10px; border: 2px solid var(--line); border-radius: 13px; background: white; color: var(--navy); font-weight: 800; }
+    .reason-button.selected { border-color: var(--teal-800); background: var(--teal-100); color: var(--teal-900); }
+
+    .page-head { display: flex; gap: 16px; justify-content: space-between; align-items: flex-start; margin: 4px 0 18px; }
+    .page-head h1 { margin: 0; font-size: clamp(27px, 5vw, 38px); }
+    .page-head p { margin: 7px 0 0; color: var(--muted); font-weight: 700; }
+    .back-button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: white; color: var(--navy); font-weight: 800; }
+    .toolbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px; padding: 16px; border-radius: 17px; background: white; box-shadow: 0 8px 25px rgba(15, 50, 65, .08); }
+    .mark-all { padding: 13px 18px; border: 0; border-radius: 13px; background: var(--teal-800); color: white; font-weight: 900; }
+    .progress-copy { color: var(--muted); font-size: 14px; font-weight: 800; text-align: right; }
+    .progress-track { width: 160px; height: 8px; margin-top: 7px; overflow: hidden; border-radius: 99px; background: #E5EDF0; }
+    .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--green), #34D399); transition: width .2s ease; }
+
+    .student-list { display: grid; gap: 12px; }
+    .student-card { padding: 17px; border: 1px solid var(--line); border-radius: 17px; background: white; box-shadow: 0 5px 16px rgba(15, 50, 65, .05); }
+    .student-top { display: flex; gap: 12px; align-items: center; }
+    .student-number { flex: 0 0 34px; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; color: var(--teal-900); background: var(--teal-100); font-weight: 900; }
+    .student-name { flex: 1; min-width: 0; font-size: 15px; font-weight: 900; }
+    .status-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+    .status-button { height: 43px; border: 2px solid currentColor; border-radius: 12px; background: white; font-size: 17px; font-weight: 950; }
+    .status-button[data-status="A"] { color: var(--green); }
+    .status-button[data-status="F"] { color: var(--red); }
+    .status-button[data-status="R"] { color: var(--orange); }
+    .status-button[data-status="J"] { color: var(--blue); }
+    .status-button.selected { color: white; }
+    .status-button[data-status="A"].selected { background: var(--green); }
+    .status-button[data-status="F"].selected { background: var(--red); }
+    .status-button[data-status="R"].selected { background: var(--orange); }
+    .status-button[data-status="J"].selected { background: var(--blue); }
+    .note-input { width: 100%; margin-top: 11px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px; background: #FAFCFD; color: var(--navy); }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 16px 0; padding: 14px 16px; border-radius: 14px; background: white; color: #475569; font-size: 13px; font-weight: 800; }
+    .legend b { display: inline-grid; width: 22px; height: 22px; margin-right: 5px; place-items: center; border-radius: 6px; color: white; }
+    .sticky-actions { position: sticky; bottom: 10px; z-index: 20; margin-top: 18px; padding: 12px; border: 1px solid rgba(8,127,140,.12); border-radius: 18px; background: rgba(255,255,255,.94); box-shadow: var(--shadow); backdrop-filter: blur(14px); }
+
+    .primary, .secondary, .danger-soft { min-height: 50px; padding: 12px 18px; border-radius: 13px; font-weight: 900; }
+    .primary { border: 0; background: var(--teal-800); color: white; box-shadow: 0 5px 0 var(--teal-900); }
+    .secondary { border: 2px solid var(--teal-800); background: white; color: var(--teal-900); }
+    .danger-soft { border: 1px solid #F5C2C2; background: var(--red-soft); color: #991B1B; }
+    .full { width: 100%; }
+
+    .report-controls { display: grid; grid-template-columns: 1.5fr 1fr auto; gap: 12px; padding: 18px; border-radius: 18px; background: white; box-shadow: 0 8px 25px rgba(15,50,65,.08); }
+    .field input, .field select, .field textarea { width: 100%; min-height: 48px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 12px; color: var(--navy); background: #FAFCFD; }
+    .field textarea { min-height: 96px; resize: vertical; }
+    .report-card { margin-top: 18px; padding: 24px; border: 1px solid var(--line); border-radius: 22px; background: white; box-shadow: var(--shadow); }
+    .report-title { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+    .report-title h2 { margin: 0; font-size: clamp(22px, 5vw, 30px); }
+    .report-title p { margin: 6px 0 0; color: var(--muted); font-weight: 700; }
+    .percentage-ring { flex: 0 0 94px; width: 94px; height: 94px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--teal-800) var(--percent), #E5EEF1 0); }
+    .percentage-ring span { width: 72px; height: 72px; display: grid; place-items: center; border-radius: 50%; background: white; color: var(--teal-900); font-size: 20px; font-weight: 950; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .summary-card { padding: 16px 10px; border-radius: 15px; text-align: center; }
+    .summary-card strong { display: block; font-size: 27px; }
+    .summary-card span { font-size: 13px; font-weight: 800; }
+    .summary-card.green { background: var(--green-soft); color: #166534; }
+    .summary-card.red { background: var(--red-soft); color: #991B1B; }
+    .summary-card.orange { background: var(--orange-soft); color: #9A3412; }
+    .summary-card.blue { background: var(--blue-soft); color: #1E40AF; }
+    .section-title { margin: 26px 0 13px; font-size: 18px; }
+    .chart { height: 205px; display: flex; gap: 9px; align-items: flex-end; padding: 18px 8px 28px; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .chart-month { position: relative; flex: 1; height: 100%; display: flex; gap: 3px; align-items: flex-end; justify-content: center; }
+    .bar { width: min(16px, 42%); min-height: 2px; border-radius: 5px 5px 0 0; }
+    .bar.attendance { background: var(--green); }
+    .bar.absence { background: var(--red); }
+    .month-label { position: absolute; left: 50%; bottom: -23px; transform: translateX(-50%); color: var(--muted); font-size: 11px; font-weight: 800; }
+    .detail-list { display: grid; gap: 9px; }
+    .detail-item { display: grid; grid-template-columns: 125px 115px 1fr; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 12px; background: #F8FAFC; }
+    .status-pill { padding: 6px 9px; border-radius: 999px; text-align: center; font-size: 12px; font-weight: 900; }
+    .status-pill.F { color: #991B1B; background: var(--red-soft); }
+    .status-pill.R { color: #9A3412; background: var(--orange-soft); }
+    .status-pill.J { color: #1E40AF; background: var(--blue-soft); }
+    .report-actions { display: flex; gap: 10px; margin-top: 22px; }
+    .family-form { margin-top: 20px; padding: 20px; border-radius: 17px; background: #F7FBFC; border: 1px solid var(--line); }
+    .family-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .span-2 { grid-column: 1 / -1; }
+
+    .admin-layout { display: grid; grid-template-columns: minmax(280px, .8fr) minmax(360px, 1.2fr); gap: 18px; align-items: start; }
+    .admin-card { padding: 21px; border: 1px solid var(--line); border-radius: 20px; background: white; box-shadow: 0 8px 25px rgba(15,50,65,.08); }
+    .admin-card h2 { margin: 0 0 7px; font-size: 21px; }
+    .admin-card > p { margin: 0 0 17px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .admin-card textarea { width: 100%; min-height: 150px; padding: 13px; border: 1px solid var(--line); border-radius: 13px; color: var(--navy); resize: vertical; }
+    .student-admin-list { max-height: 480px; overflow: auto; padding-right: 4px; }
+    .admin-student { display: flex; gap: 11px; align-items: center; min-height: 48px; padding: 9px 10px; border-bottom: 1px solid #EDF2F4; }
+    .admin-student:last-child { border-bottom: 0; }
+    .admin-student input { width: 20px; height: 20px; accent-color: var(--teal-800); }
+    .admin-student span { flex: 1; font-size: 13px; font-weight: 850; }
+    .admin-student.inactive span { color: var(--muted); }
+    .roster-count { display: inline-flex; margin-left: 7px; padding: 4px 8px; border-radius: 999px; background: var(--teal-100); color: var(--teal-900); font-size: 12px; font-weight: 900; }
+    .admin-action-row { display: flex; gap: 10px; margin-top: 15px; }
+
+    .empty-state { padding: 38px 18px; text-align: center; color: var(--muted); }
+    .empty-state svg { width: 56px; color: #94A3B8; }
+    .empty-state strong { display: block; margin-top: 12px; color: var(--navy); font-size: 18px; }
+
+    .loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; background: rgba(239,248,250,.88); backdrop-filter: blur(8px); }
+    .loader-card { padding: 26px 30px; border-radius: 19px; background: white; box-shadow: var(--shadow); text-align: center; font-weight: 900; color: var(--teal-900); }
+    .spinner { width: 38px; height: 38px; margin: 0 auto 13px; border: 4px solid var(--teal-100); border-top-color: var(--teal-800); border-radius: 50%; animation: spin .75s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .toast { position: fixed; z-index: 120; left: 50%; bottom: 24px; max-width: min(520px, calc(100% - 32px)); transform: translateX(-50%) translateY(120px); padding: 14px 18px; border-radius: 13px; background: #102A43; color: white; box-shadow: var(--shadow); font-weight: 800; transition: transform .25s ease; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #991B1B; }
+
+    @media (min-width: 760px) {
+      .student-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 680px) {
+      .topbar { height: 66px; }
+      .brand small { max-width: 210px; }
+      main { padding: 18px 12px 42px; }
+      .hero { min-height: 170px; padding: 26px 22px; }
+      .hero-mark { width: 58px; right: 18px; }
+      .home-card { width: calc(100% - 12px); padding: 20px 17px; }
+      .calendar-icon { flex-basis: 46px; width: 46px; height: 46px; }
+      .reason-grid { grid-template-columns: 1fr; }
+      .page-head { align-items: center; }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .progress-copy { text-align: left; }
+      .progress-track { width: 100%; }
+      .student-card { padding: 15px 13px; }
+      .report-controls { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .report-card { padding: 18px 14px; }
+      .report-title { align-items: center; }
+      .percentage-ring { flex-basis: 78px; width: 78px; height: 78px; }
+      .percentage-ring span { width: 59px; height: 59px; font-size: 17px; }
+      .detail-item { grid-template-columns: 1fr auto; }
+      .detail-item .detail-note { grid-column: 1 / -1; }
+      .report-actions { flex-direction: column; }
+      .family-grid { grid-template-columns: 1fr; }
+      .span-2 { grid-column: auto; }
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-action-row { flex-direction: column; }
+    }
+
+    @media print {
+      body { background: white; }
+      .topbar, .drawer, .drawer-overlay, #homeScreen, #attendanceScreen, #adminScreen, .report-controls, .report-actions, .family-form, .no-print, .toast, .loader { display: none !important; }
+      main { width: 100%; padding: 0; }
+      #reportScreen { display: block !important; }
+      #reportCard { margin: 0; border: 0; box-shadow: none; }
+      .chart { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <section class="connection-screen" id="connectionScreen">
+    <article class="connection-card">
+      <div class="connection-head">
+        <h1>Conectar pase de lista</h1>
+        <p>Escribe estos datos una sola vez para comunicar la página con tu hoja de cálculo.</p>
+      </div>
+      <form class="connection-form" id="connectionForm">
+        <div class="connection-error hidden" id="connectionError"></div>
+        <div class="field">
+          <label for="apiUrl">Enlace de Apps Script</label>
+          <input id="apiUrl" type="url" inputmode="url" autocomplete="url" placeholder="https://script.google.com/macros/s/.../exec" required>
+        </div>
+        <div class="field">
+          <label for="accessPin">PIN de seis números</label>
+          <input id="accessPin" type="password" inputmode="numeric" autocomplete="current-password" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required>
+        </div>
+        <button class="primary full" style="margin-top:20px" type="submit">Conectar con Google Sheets</button>
+        <p class="connection-help">El enlace y el PIN se guardarán únicamente en este dispositivo. No estarán escritos en la página pública de GitHub.</p>
+      </form>
+    </article>
+  </section>
+
+  <div class="app-shell hidden" id="appShell">
+    <header class="topbar">
+      <button class="menu-button" id="menuButton" aria-label="Abrir menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="brand"><strong>Pase de lista</strong><small id="schoolName">Cargando información…</small></div>
+      <div class="group-badge" id="groupBadge">4°A</div>
+    </header>
+
+    <div class="drawer-overlay hidden" id="drawerOverlay"></div>
+    <aside class="drawer" id="drawer">
+      <div class="drawer-title"><strong>Pase de lista 4°A</strong><span id="drawerCycle">Ciclo escolar</span></div>
+      <button class="nav-button active" data-screen="home"><span class="nav-icon">I</span>Inicio</button>
+      <button class="nav-button" data-screen="attendance"><span class="nav-icon">A</span>Pase de lista</button>
+      <button class="nav-button" data-screen="report"><span class="nav-icon">R</span>Reportes individuales</button>
+      <button class="nav-button" data-screen="admin"><span class="nav-icon">G</span>Administrar alumnos</button>
+      <div class="nav-separator"></div>
+      <button class="nav-button" id="changeConnectionButton"><span class="nav-icon">C</span>Cambiar conexión</button>
+    </aside>
+
+    <main>
+      <section class="screen" id="homeScreen">
+        <div class="hero">
+          <h1 id="heroTitle">Pase de lista 4°A</h1>
+          <p>Registro diario, reportes individuales y seguimiento de asistencia.</p>
+          <svg class="hero-mark" viewBox="0 0 80 100" fill="none" stroke="currentColor" stroke-width="5"><path d="M24 75 13 87l15-3 43-58c4-6-6-14-11-8L24 75Z"/><path d="m24 75 12 9M52 29l12 9"/></svg>
+        </div>
+        <div class="home-card">
+          <div class="date-row">
+            <div class="calendar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></div>
+            <div class="date-copy">
+              <p class="eyebrow">Fecha seleccionada</p>
+              <p class="display-date" id="displayDate">Cargando…</p>
+              <button class="change-date" id="changeDateButton">Cambiar fecha o corregir otro día</button>
+              <input class="date-input hidden" type="date" id="dateInput">
+            </div>
+          </div>
+          <div id="dayNotice" class="notice hidden"></div>
+          <div class="divider"></div>
+          <h2 class="question">¿Hay clases hoy?</h2>
+          <div class="choice-row">
+            <button class="choice-button choice-yes" id="yesButton">Sí</button>
+            <button class="choice-button choice-no" id="noButton">No</button>
+          </div>
+          <div class="reason-panel hidden" id="reasonPanel">
+            <label class="eyebrow">Selecciona el motivo</label>
+            <div class="reason-grid" id="reasonGrid"></div>
+            <div class="field" style="margin-top:12px"><label for="reasonDetail">Detalle opcional</label><input id="reasonDetail" placeholder="Escribe una aclaración si es necesaria"></div>
+            <button class="primary full" style="margin-top:15px" id="saveNoClassButton">Guardar día sin clases</button>
+          </div>
+          <button class="secondary full" style="margin-top:24px" id="openReportsButton">Ver reportes individuales</button>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="attendanceScreen">
+        <div class="page-head">
+          <div><h1>Asistencia de hoy</h1><p id="attendanceDate">Fecha</p></div>
+          <button class="back-button" data-screen="home">Volver</button>
+        </div>
+        <div class="toolbar">
+          <button class="mark-all" id="markAllButton">Marcar todos A</button>
+          <div class="progress-copy"><span id="progressText">0 de 35 registrados</span><div class="progress-track"><div class="progress-bar" id="progressBar"></div></div></div>
+        </div>
+        <div class="legend">
+          <span><b style="background:var(--green)">A</b>Asistencia</span>
+          <span><b style="background:var(--red)">F</b>Falta</span>
+          <span><b style="background:var(--orange)">R</b>Retardo</span>
+          <span><b style="background:var(--blue)">J</b>Justificada</span>
+        </div>
+        <div class="student-list" id="studentList"></div>
+        <div class="sticky-actions"><button class="primary full" id="saveAttendanceButton">Guardar asistencia</button></div>
+      </section>
+
+      <section class="screen hidden" id="reportScreen">
+        <div class="page-head no-print">
+          <div><h1>Reporte individual</h1><p>Consulta las faltas, retardos y asistencias de cada alumno.</p></div>
+          <button class="back-button" data-screen="home">Volver</button>
+        </div>
+        <div class="report-controls">
+          <div class="field"><label for="studentSelect">Buscar alumno</label><select id="studentSelect"><option value="">Selecciona un alumno</option></select></div>
+          <div class="field"><label for="periodSelect">Periodo</label><select id="periodSelect"></select></div>
+          <button class="primary" id="viewReportButton" style="align-self:end">Ver reporte</button>
+        </div>
+        <div id="reportEmpty" class="report-card empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13Z"/><path d="M4 6.5A2.5 2.5 0 0 1 6.5 9H20M9 13h6"/></svg>
+          <strong>Selecciona un alumno</strong><span>Su reporte de asistencia aparecerá aquí.</span>
+        </div>
+        <article class="report-card hidden" id="reportCard">
+          <div class="report-title">
+            <div><p class="eyebrow">Reporte de asistencia</p><h2 id="reportStudentName"></h2><p id="reportPeriod"></p></div>
+            <div class="percentage-ring" id="percentageRing" style="--percent:0%"><span id="reportPercentage">0 %</span></div>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-card green"><strong id="countAttendance">0</strong><span>Asistencias A+R</span></div>
+            <div class="summary-card red"><strong id="countAbsence">0</strong><span>Inasistencias F+J</span></div>
+            <div class="summary-card orange"><strong id="countTardy">0</strong><span>Retardos</span></div>
+            <div class="summary-card blue"><strong id="countJustified">0</strong><span>Justificadas</span></div>
+          </div>
+          <h3 class="section-title">Asistencia por mes</h3>
+          <div class="chart" id="monthlyChart"></div>
+          <h3 class="section-title">Faltas, retardos y justificaciones</h3>
+          <div class="detail-list" id="detailList"></div>
+          <div class="report-actions">
+            <button class="secondary" id="familyButton">Registrar entrevista familiar</button>
+            <button class="primary" id="printReportButton">Generar PDF</button>
+          </div>
+          <form class="family-form hidden" id="familyForm">
+            <h3 style="margin-top:0">Seguimiento con la familia</h3>
+            <div class="family-grid">
+              <div class="field"><label for="familyDate">Fecha de entrevista</label><input type="date" id="familyDate" required></div>
+              <div class="field"><label for="familyName">Nombre del familiar</label><input id="familyName" placeholder="Nombre de quien acudió"></div>
+              <div class="field span-2"><label for="familyReason">Motivo</label><input id="familyReason" placeholder="Ej. Seguimiento por inasistencias"></div>
+              <div class="field span-2"><label for="familyAgreements">Acuerdos</label><textarea id="familyAgreements" placeholder="Escribe los compromisos acordados"></textarea></div>
+              <div class="field span-2"><label for="familyNotes">Observaciones</label><textarea id="familyNotes" placeholder="Información adicional"></textarea></div>
+              <div class="field"><label for="reviewDate">Próxima revisión</label><input type="date" id="reviewDate"></div>
+              <div style="align-self:end"><button class="primary full" type="submit">Guardar entrevista</button></div>
+            </div>
+          </form>
+        </article>
+      </section>
+
+      <section class="screen hidden" id="adminScreen">
+        <div class="page-head">
+          <div><h1>Administrar alumnos</h1><p>Agrega nuevos alumnos o da de baja a quienes ya no pertenecen al grupo.</p></div>
+          <button class="back-button" data-screen="home">Volver</button>
+        </div>
+        <div class="notice" style="margin:0 0 18px">Dar de baja no elimina las asistencias anteriores. El alumno seguirá disponible en los reportes históricos y podrá reactivarse.</div>
+        <div class="admin-layout">
+          <form class="admin-card" id="addStudentsForm">
+            <h2>Agregar alumnos</h2>
+            <p>Escribe un nombre completo por línea. Puedes agregar uno o varios al mismo tiempo.</p>
+            <div class="field"><label for="newStudentNames">Nombres completos</label><textarea id="newStudentNames" placeholder="EJEMPLO PÉREZ LÓPEZ ANA&#10;EJEMPLO GÓMEZ CRUZ LUIS" required></textarea></div>
+            <button class="primary full" style="margin-top:14px" type="submit">Agregar al grupo</button>
+          </form>
+          <div style="display:grid;gap:18px">
+            <div class="admin-card">
+              <h2>Alumnos activos <span class="roster-count" id="activeCount">0</span></h2>
+              <p>Selecciona uno o varios alumnos para darlos de baja.</p>
+              <div class="student-admin-list" id="activeStudentList"></div>
+              <div class="admin-action-row"><button class="danger-soft full" id="deactivateStudentsButton">Dar de baja seleccionados</button></div>
+            </div>
+            <div class="admin-card" id="inactiveCard">
+              <h2>Alumnos dados de baja <span class="roster-count" id="inactiveCount">0</span></h2>
+              <p>Su historial está protegido. Puedes reactivarlos cuando sea necesario.</p>
+              <div class="student-admin-list" id="inactiveStudentList"></div>
+              <div class="admin-action-row"><button class="secondary full" id="reactivateStudentsButton">Reactivar seleccionados</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="loader hidden" id="loader"><div class="loader-card"><div class="spinner"></div><span id="loaderText">Preparando la aplicación…</span></div></div>
+  <div class="toast" id="toast"></div>
+  <div class="hidden" id="bridgeContainer" aria-hidden="true"></div>
+
+  <script>
+    const state = {
+      initial: null,
+      currentDate: '',
+      day: null,
+      attendance: {},
+      selectedReason: '',
+      currentReport: null,
+      connection: null
+    };
+
+    const STORAGE_URL = 'paseLista4A.apiUrl';
+    const STORAGE_PIN = 'paseLista4A.accessPin';
+    const API_MESSAGE_SOURCE = 'pase-lista-4a-api';
+    const bridgePending = new Map();
+
+    const $ = selector => document.querySelector(selector);
+    const $$ = selector => Array.from(document.querySelectorAll(selector));
+
+    document.addEventListener('DOMContentLoaded', boot);
+    window.addEventListener('message', receiveBridgeMessage);
+
+    function boot() {
+      bindEvents();
+      $('#connectionForm').addEventListener('submit', connectFromForm);
+      $('#changeConnectionButton').addEventListener('click', changeConnection);
+      const url = localStorage.getItem(STORAGE_URL) || '';
+      const pin = localStorage.getItem(STORAGE_PIN) || '';
+      $('#apiUrl').value = url;
+      $('#accessPin').value = pin;
+      if (url && pin) {
+        state.connection = { url, pin };
+        init(false);
+      } else {
+        showConnection();
+      }
+    }
+
+    async function init(saveConnection) {
+      setLoading(true, 'Conectando con Google Sheets…');
+      $('#connectionError').classList.add('hidden');
+      try {
+        state.initial = await server('getInitialData');
+        if (saveConnection) {
+          localStorage.setItem(STORAGE_URL, state.connection.url);
+          localStorage.setItem(STORAGE_PIN, state.connection.pin);
+        }
+        state.currentDate = state.initial.today;
+        state.day = state.initial.day;
+        fillStaticData();
+        renderHome();
+        $('#connectionScreen').classList.add('hidden');
+        $('#appShell').classList.remove('hidden');
+      } catch (error) {
+        showConnection(error.message || 'No fue posible iniciar la aplicación.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function connectFromForm(event) {
+      event.preventDefault();
+      const url = normalizeApiUrl($('#apiUrl').value);
+      const pin = $('#accessPin').value.trim();
+      if (!url) return showConnection('El enlace debe comenzar con https://script.google.com/macros/s/ y terminar en /exec.');
+      if (!/^\d{6}$/.test(pin)) return showConnection('Escribe el PIN completo de seis números.');
+      state.connection = { url, pin };
+      init(true);
+    }
+
+    function changeConnection() {
+      closeDrawer();
+      $('#apiUrl').value = state.connection ? state.connection.url : '';
+      $('#accessPin').value = '';
+      $('#appShell').classList.add('hidden');
+      showConnection();
+      $('#accessPin').focus();
+    }
+
+    function showConnection(message) {
+      $('#connectionScreen').classList.remove('hidden');
+      $('#appShell').classList.add('hidden');
+      const error = $('#connectionError');
+      error.textContent = message || '';
+      error.classList.toggle('hidden', !message);
+    }
+
+    function normalizeApiUrl(value) {
+      try {
+        const url = new URL(String(value || '').trim());
+        if (url.protocol !== 'https:' || url.hostname !== 'script.google.com' || !/^\/macros\/s\/[^/]+\/exec\/?$/.test(url.pathname)) return '';
+        url.search = '';
+        url.hash = '';
+        return url.toString().replace(/\/$/, '');
+      } catch (error) {
+        return '';
+      }
+    }
+
+    function bindEvents() {
+      $('#menuButton').addEventListener('click', openDrawer);
+      $('#drawerOverlay').addEventListener('click', closeDrawer);
+      $$('.nav-button, [data-screen].back-button').forEach(button => button.addEventListener('click', () => showScreen(button.dataset.screen)));
+      $('#changeDateButton').addEventListener('click', () => $('#dateInput').classList.toggle('hidden'));
+      $('#dateInput').addEventListener('change', changeDate);
+      $('#yesButton').addEventListener('click', openAttendance);
+      $('#noButton').addEventListener('click', () => $('#reasonPanel').classList.toggle('hidden'));
+      $('#openReportsButton').addEventListener('click', () => showScreen('report'));
+      $('#reasonGrid').addEventListener('click', selectReason);
+      $('#saveNoClassButton').addEventListener('click', saveNoClass);
+      $('#markAllButton').addEventListener('click', markAllPresent);
+      $('#studentList').addEventListener('click', selectStatus);
+      $('#studentList').addEventListener('input', updateNote);
+      $('#saveAttendanceButton').addEventListener('click', saveAttendance);
+      $('#viewReportButton').addEventListener('click', loadReport);
+      $('#studentSelect').addEventListener('change', () => { if ($('#studentSelect').value) loadReport(); });
+      $('#periodSelect').addEventListener('change', () => { if ($('#studentSelect').value) loadReport(); });
+      $('#printReportButton').addEventListener('click', () => window.print());
+      $('#familyButton').addEventListener('click', () => $('#familyForm').classList.toggle('hidden'));
+      $('#familyForm').addEventListener('submit', saveFamilyFollowUp);
+      $('#addStudentsForm').addEventListener('submit', addStudents);
+      $('#deactivateStudentsButton').addEventListener('click', () => changeStudentsActive(false));
+      $('#reactivateStudentsButton').addEventListener('click', () => changeStudentsActive(true));
+    }
+
+    function fillStaticData() {
+      const config = state.initial.config;
+      $('#schoolName').textContent = config.school;
+      $('#groupBadge').textContent = config.group;
+      $('#heroTitle').textContent = `Pase de lista ${config.group}`;
+      $('#drawerCycle').textContent = `Ciclo escolar ${config.cycle}`;
+      $('#dateInput').value = state.currentDate;
+      $('#familyDate').value = state.initial.today;
+
+      $('#reasonGrid').innerHTML = state.initial.noClassReasons.map(reason =>
+        `<button class="reason-button" data-reason="${escapeHtml(reason)}">${escapeHtml(reason)}</button>`
+      ).join('');
+      $('#studentSelect').innerHTML = '<option value="">Selecciona un alumno</option>' + state.initial.allStudents.map(student =>
+        `<option value="${student.id}">${escapeHtml(student.name)}${student.active ? '' : ' (BAJA)'}</option>`
+      ).join('');
+      $('#periodSelect').innerHTML = state.initial.periods.map(period =>
+        `<option value="${period.key}">${escapeHtml(period.label)}</option>`
+      ).join('');
+      const currentMonth = state.currentDate.slice(0, 7);
+      if (state.initial.periods.some(period => period.key === currentMonth)) $('#periodSelect').value = currentMonth;
+      renderAdmin();
+    }
+
+    function renderHome() {
+      $('#displayDate').textContent = state.day.displayDate;
+      $('#dateInput').value = state.currentDate;
+      const notice = $('#dayNotice');
+      if (state.day.noClass) {
+        notice.textContent = `Registrado como día sin clases: ${state.day.noClassReason}${state.day.noClassDetail ? '. ' + state.day.noClassDetail : ''}`;
+        notice.classList.remove('hidden');
+      } else {
+        const count = Object.keys(state.day.existing || {}).length;
+        if (count) {
+          notice.textContent = `Ya hay ${count} registros guardados para esta fecha. Puedes abrirlos y corregirlos.`;
+          notice.classList.remove('hidden');
+        } else {
+          notice.classList.add('hidden');
+        }
+      }
+      $('#reasonPanel').classList.add('hidden');
+      state.selectedReason = '';
+      $$('.reason-button').forEach(button => button.classList.remove('selected'));
+      $('#reasonDetail').value = '';
+    }
+
+    async function changeDate(event) {
+      if (!event.target.value) return;
+      setLoading(true, 'Consultando la fecha…');
+      try {
+        state.currentDate = event.target.value;
+        state.day = await server('getDayData', state.currentDate);
+        renderHome();
+      } catch (error) {
+        showToast(error.message, true);
+      } finally { setLoading(false); }
+    }
+
+    function selectReason(event) {
+      const button = event.target.closest('[data-reason]');
+      if (!button) return;
+      state.selectedReason = button.dataset.reason;
+      $$('.reason-button').forEach(item => item.classList.toggle('selected', item === button));
+      if (state.selectedReason === 'Otro motivo') $('#reasonDetail').focus();
+    }
+
+    async function saveNoClass() {
+      if (!state.selectedReason) return showToast('Selecciona el motivo.', true);
+      setLoading(true, 'Guardando el día sin clases…');
+      try {
+        const result = await server('saveNoClass', {
+          date: state.currentDate,
+          reason: state.selectedReason,
+          detail: $('#reasonDetail').value
+        });
+        state.day = await server('getDayData', state.currentDate);
+        renderHome();
+        showToast(result.message);
+      } catch (error) { showToast(error.message, true); }
+      finally { setLoading(false); }
+    }
+
+    function openAttendance() {
+      if (state.day.noClass && !confirm(`Esta fecha está registrada como “${state.day.noClassReason}”. ¿Confirmas que sí hubo clases?`)) return;
+      state.attendance = {};
+      state.initial.students.forEach(student => {
+        const saved = state.day.existing && state.day.existing[student.id];
+        state.attendance[student.id] = saved ? { status: saved.status, note: saved.note || '' } : { status: '', note: '' };
+      });
+      renderStudentList();
+      $('#attendanceDate').textContent = state.day.displayDate;
+      showScreen('attendance');
+    }
+
+    function renderStudentList() {
+      $('#studentList').innerHTML = state.initial.students.map((student, index) => {
+        const record = state.attendance[student.id];
+        return `<article class="student-card" data-student="${student.id}">
+          <div class="student-top"><span class="student-number">${index + 1}</span><span class="student-name">${escapeHtml(student.name)}</span></div>
+          <div class="status-buttons">
+            ${['A','F','R','J'].map(status => `<button class="status-button ${record.status === status ? 'selected' : ''}" data-status="${status}" aria-label="${status}">${status}</button>`).join('')}
+          </div>
+          <input class="note-input ${record.status && record.status !== 'A' ? '' : 'hidden'}" value="${escapeAttribute(record.note)}" placeholder="Observación opcional">
+        </article>`;
+      }).join('');
+      updateProgress();
+    }
+
+    function selectStatus(event) {
+      const button = event.target.closest('.status-button');
+      if (!button) return;
+      const card = button.closest('.student-card');
+      const id = card.dataset.student;
+      state.attendance[id].status = button.dataset.status;
+      card.querySelectorAll('.status-button').forEach(item => item.classList.toggle('selected', item === button));
+      card.querySelector('.note-input').classList.toggle('hidden', button.dataset.status === 'A');
+      updateProgress();
+    }
+
+    function updateNote(event) {
+      if (!event.target.classList.contains('note-input')) return;
+      state.attendance[event.target.closest('.student-card').dataset.student].note = event.target.value;
+    }
+
+    function markAllPresent() {
+      const hasDifferent = Object.values(state.attendance).some(record => record.status && record.status !== 'A');
+      if (hasDifferent && !confirm('Ya seleccionaste faltas, retardos o justificaciones. ¿Deseas cambiar a todos a asistencia?')) return;
+      Object.keys(state.attendance).forEach(id => state.attendance[id] = { status: 'A', note: '' });
+      renderStudentList();
+    }
+
+    function updateProgress() {
+      const complete = Object.values(state.attendance).filter(record => record.status).length;
+      const total = state.initial.students.length;
+      $('#progressText').textContent = `${complete} de ${total} registrados`;
+      $('#progressBar').style.width = `${total ? complete * 100 / total : 0}%`;
+    }
+
+    async function saveAttendance() {
+      const pending = state.initial.students.filter(student => !state.attendance[student.id].status);
+      if (pending.length) return showToast(`Falta registrar a ${pending.length} alumno${pending.length === 1 ? '' : 's'}.`, true);
+      if (!confirm('¿Guardar la asistencia de esta fecha?')) return;
+      setLoading(true, 'Guardando asistencia y actualizando reportes…');
+      try {
+        const records = state.initial.students.map(student => ({
+          studentId: student.id,
+          status: state.attendance[student.id].status,
+          note: state.attendance[student.id].note || ''
+        }));
+        const result = await server('saveAttendance', { date: state.currentDate, records });
+        state.day = await server('getDayData', state.currentDate);
+        renderHome();
+        showScreen('home');
+        showToast(result.message);
+      } catch (error) { showToast(error.message, true); }
+      finally { setLoading(false); }
+    }
+
+    async function loadReport() {
+      const studentId = $('#studentSelect').value;
+      if (!studentId) return showToast('Selecciona un alumno.', true);
+      setLoading(true, 'Preparando el reporte individual…');
+      try {
+        state.currentReport = await server('getIndividualReport', studentId, $('#periodSelect').value);
+        renderReport(state.currentReport);
+      } catch (error) { showToast(error.message, true); }
+      finally { setLoading(false); }
+    }
+
+    function renderReport(report) {
+      $('#reportEmpty').classList.add('hidden');
+      $('#reportCard').classList.remove('hidden');
+      $('#reportStudentName').textContent = report.student.name;
+      $('#reportPeriod').textContent = `${report.period} · ${report.totalDays} días registrados`;
+      $('#reportPercentage').textContent = `${formatNumber(report.percentage)} %`;
+      $('#percentageRing').style.setProperty('--percent', `${Math.max(0, Math.min(100, report.percentage))}%`);
+      $('#countAttendance').textContent = report.attended;
+      $('#countAbsence').textContent = report.absent;
+      $('#countTardy').textContent = report.counts.R;
+      $('#countJustified').textContent = report.counts.J;
+
+      const max = Math.max(1, ...report.monthly.map(item => item.attendance + item.absence));
+      $('#monthlyChart').innerHTML = report.monthly.map(item =>
+        `<div class="chart-month" title="${item.label}: ${item.attendance} asistencias, ${item.absence} inasistencias">
+          <div class="bar attendance" style="height:${Math.max(2, item.attendance * 100 / max)}%"></div>
+          <div class="bar absence" style="height:${Math.max(2, item.absence * 100 / max)}%"></div>
+          <span class="month-label">${item.label}</span>
+        </div>`
+      ).join('');
+
+      $('#detailList').innerHTML = report.details.length ? report.details.map(item =>
+        `<div class="detail-item"><strong>${escapeHtml(item.displayDate)}</strong><span class="status-pill ${item.status}">${escapeHtml(item.statusLabel)}</span><span class="detail-note">${escapeHtml(item.note || 'Sin observación')}</span></div>`
+      ).join('') : '<div class="empty-state"><strong>Sin faltas ni retardos en este periodo</strong></div>';
+      $('#familyForm').classList.add('hidden');
+    }
+
+    async function saveFamilyFollowUp(event) {
+      event.preventDefault();
+      if (!state.currentReport) return;
+      setLoading(true, 'Guardando la entrevista…');
+      try {
+        const result = await server('saveFamilyFollowUp', {
+          studentId: state.currentReport.student.id,
+          date: $('#familyDate').value,
+          familyName: $('#familyName').value,
+          reason: $('#familyReason').value,
+          agreements: $('#familyAgreements').value,
+          notes: $('#familyNotes').value,
+          reviewDate: $('#reviewDate').value
+        });
+        event.target.reset();
+        $('#familyDate').value = state.initial.today;
+        $('#familyForm').classList.add('hidden');
+        showToast(result.message);
+      } catch (error) { showToast(error.message, true); }
+      finally { setLoading(false); }
+    }
+
+    function renderAdmin() {
+      if (!state.initial || !state.initial.allStudents) return;
+      const active = state.initial.allStudents.filter(student => student.active);
+      const inactive = state.initial.allStudents.filter(student => !student.active);
+      $('#activeCount').textContent = active.length;
+      $('#inactiveCount').textContent = inactive.length;
+      $('#activeStudentList').innerHTML = active.map(student =>
+        `<label class="admin-student"><input type="checkbox" value="${student.id}" data-admin-active="true"><span>${escapeHtml(student.name)}</span></label>`
+      ).join('') || '<div class="empty-state">No hay alumnos activos.</div>';
+      $('#inactiveStudentList').innerHTML = inactive.map(student =>
+        `<label class="admin-student inactive"><input type="checkbox" value="${student.id}" data-admin-active="false"><span>${escapeHtml(student.name)}</span></label>`
+      ).join('') || '<div class="empty-state">No hay alumnos dados de baja.</div>';
+      $('#inactiveCard').classList.toggle('hidden', inactive.length === 0);
+    }
+
+    async function addStudents(event) {
+      event.preventDefault();
+      const names = $('#newStudentNames').value.split(/\n/).map(name => name.trim()).filter(Boolean);
+      if (!names.length) return showToast('Escribe al menos un nombre.', true);
+      setLoading(true, 'Agregando alumnos y actualizando las hojas…');
+      try {
+        const result = await server('addStudents', names);
+        await reloadStudentData();
+        $('#newStudentNames').value = '';
+        showToast(result.message);
+      } catch (error) { showToast(error.message, true); }
+      finally { setLoading(false); }
+    }
+
+    async function changeStudentsActive(active) {
+      const selector = active ? '[data-admin-active="false"]:checked' : '[data-admin-active="true"]:checked';
+      const ids = $$(selector).map(input => input.value);
+      if (!ids.length) return showToast('Selecciona al menos un alumno.', true);
+      const action = active ? 'reactivar' : 'dar de baja';
+      if (!confirm(`¿Deseas ${action} a ${ids.length} alumno${ids.length === 1 ? '' : 's'}?`)) return;
+      setLoading(true, active ? 'Reactivando alumnos…' : 'Protegiendo historial y dando de baja…');
+      try {
+        const result = await server('setStudentsActive', ids, active);
+        await reloadStudentData();
+        showToast(result.message);
+      } catch (error) { showToast(error.message, true); }
+      finally { setLoading(false); }
+    }
+
+    async function reloadStudentData() {
+      const refreshed = await server('getInitialData');
+      state.initial = refreshed;
+      state.day = refreshed.day;
+      state.currentDate = refreshed.today;
+      state.attendance = {};
+      fillStaticData();
+      renderHome();
+      renderAdmin();
+    }
+
+    function showScreen(name) {
+      closeDrawer();
+      if (name === 'attendance' && (!state.attendance || !Object.keys(state.attendance).length)) openAttendance();
+      if (name === 'admin') renderAdmin();
+      ['home','attendance','report','admin'].forEach(screen => $(`#${screen}Screen`).classList.toggle('hidden', screen !== name));
+      $$('.nav-button').forEach(button => button.classList.toggle('active', button.dataset.screen === name));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openDrawer() { $('#drawer').classList.add('open'); $('#drawerOverlay').classList.remove('hidden'); }
+    function closeDrawer() { $('#drawer').classList.remove('open'); $('#drawerOverlay').classList.add('hidden'); }
+    function setLoading(show, message) { $('#loaderText').textContent = message || 'Preparando la aplicación…'; $('#loader').classList.toggle('hidden', !show); }
+    function showToast(message, error = false) {
+      const toast = $('#toast');
+      toast.textContent = message;
+      toast.classList.toggle('error', error);
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), 3600);
+    }
+
+    function server(functionName, ...args) {
+      return new Promise((resolve, reject) => {
+        if (!state.connection || !state.connection.url || !state.connection.pin) {
+          reject(new Error('Primero conecta la página con Google Sheets.'));
+          return;
+        }
+
+        const requestId = `r${Date.now()}${Math.random().toString(36).slice(2)}`;
+        const frame = document.createElement('iframe');
+        const form = document.createElement('form');
+        frame.name = `bridge_${requestId}`;
+        frame.title = 'Conexión con Google Sheets';
+        frame.tabIndex = -1;
+        frame.style.display = 'none';
+        form.method = 'POST';
+        form.action = state.connection.url;
+        form.target = frame.name;
+        form.style.display = 'none';
+
+        const fields = {
+          requestId,
+          action: functionName,
+          args: JSON.stringify(args),
+          pin: state.connection.pin
+        };
+        Object.entries(fields).forEach(([name, value]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        });
+
+        const timer = setTimeout(() => {
+          cleanupBridge(requestId);
+          reject(new Error('Google Sheets tardó demasiado en responder. Inténtalo nuevamente.'));
+        }, 180000);
+
+        bridgePending.set(requestId, { resolve, reject, frame, form, timer });
+        $('#bridgeContainer').append(frame, form);
+        form.submit();
+      });
+    }
+
+    function receiveBridgeMessage(event) {
+      const message = event.data;
+      if (!message || message.source !== API_MESSAGE_SOURCE || !message.requestId) return;
+      const pending = bridgePending.get(message.requestId);
+      if (!pending || event.source !== pending.frame.contentWindow) return;
+      if (message.ok) pending.resolve(message.data);
+      else pending.reject(new Error(message.error || 'Google Sheets no pudo completar la operación.'));
+      cleanupBridge(message.requestId);
+    }
+
+    function cleanupBridge(requestId) {
+      const pending = bridgePending.get(requestId);
+      if (!pending) return;
+      clearTimeout(pending.timer);
+      pending.form.remove();
+      pending.frame.remove();
+      bridgePending.delete(requestId);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, character => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' })[character]);
+    }
+    function escapeAttribute(value) { return escapeHtml(value).replace(/`/g, '&#96;'); }
+    function formatNumber(value) { return Number(value || 0).toLocaleString('es-MX', { maximumFractionDigits: 1 }); }
+  </script>
+</body>
+</html>
